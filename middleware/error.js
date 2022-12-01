@@ -15,7 +15,7 @@ const errorHandler = (err, req, res, next) => {
   //validation errors (implementate nel modello) for only error name
   //err.name === "ValidationError" non possibile a causa della gestione degli errori di express-toolkit*
   if (err.name === "BadRequest") {
-    err.message = err.message.slice(err.message.lastIndexOf(":") + 1).trim(); //*Object.values(err.errors).map((value) => value.message);
+    err.message = err.message.slice(err.message.indexOf(":") + 1).trim(); //*Object.values(err.errors).map((value) => value.message);
     err.statusCode = 400;
   }
   res.status(err.statusCode || 500).json({
