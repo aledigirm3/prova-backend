@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const usersResource = require("./routes/userRoute");
+const authRoute = require("./routes/authRoute");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser"); //cookie su cui salvare il token
 const errorHandler = require("./middleware/error");
@@ -19,7 +19,7 @@ app.use(morgan("dev"));
 app.use(cors());
 
 //ROUTES MIDDLEWARE
-app.use("/user", usersResource);
+app.use("/auth", authRoute);
 
 //ERROR MIDDLEWARE
 app.use(errorHandler);

@@ -1,6 +1,5 @@
 // eslint-disable-next-line no-unused-vars
 const errorHandler = (err, req, res, next) => {
-  console.log("err: ", err);
   //mongoose bad ObjectId
   if (err.name === "CastError") {
     err.message = "Utente inesistente";

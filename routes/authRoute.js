@@ -1,8 +1,9 @@
 const { buildRouter } = require("express-toolkit");
-const UserController = require("../controllers/userController");
+const authController = require("../controllers/authController");
+const { isAuthenticated } = require("../middleware/auth");
 
 const router = buildRouter({
-  controller: UserController,
+  controller: authController,
   endpoints: {
     find: true,
     findById: true,
@@ -26,6 +27,7 @@ const router = buildRouter({
     user
   })
 }))  */
-router.post("/actions/signin", UserController.signin);
-router.get("/actions/logout", UserController.logout);
+router.post("/actions/signin", authController.signin);
+router.get("/actions/logout", authController.logout);
+router.get("/actions/getme", isAuthenticated, authController.getUserProfile);
 module.exports = router;

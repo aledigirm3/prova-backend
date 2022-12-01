@@ -33,6 +33,15 @@ myController.signin = async (req, res, next) => {
   }
 };
 
+//GET MY PROFILE
+myController.getUserProfile = async (req, res) => {
+  const user = await UserModel.findById(req.user.id);
+  res.status(200).json({
+    success: true,
+    user,
+  });
+};
+
 //LOGOUT
 myController.logout = (req, res) => {
   res.clearCookie("token");
@@ -59,5 +68,4 @@ const generateToken = async (user, statusCode, res) => {
 };
 
 //=====================================HOOK EXPRESS-TOOLKIT======================================
-
 module.exports = myController;
