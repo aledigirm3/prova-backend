@@ -1,4 +1,3 @@
-//backtick: `
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -11,12 +10,12 @@ const cors = require("cors");
 require("dotenv").config(); //maschero il link del database e della porta presenti
 
 //MIDDLEWARE
+app.use(cors({ credentials: true, origin: true }));
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(morgan("dev"));
-app.use(cors());
 
 //ROUTES MIDDLEWARE
 app.use("/auth", authRoute);
