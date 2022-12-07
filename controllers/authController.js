@@ -35,7 +35,8 @@ myController.signin = async (req, res, next) => {
 
 //GET MY PROFILE
 myController.getUserProfile = async (req, res) => {
-  const user = await UserModel.findById(req.user.id);
+  //const user = await UserModel.findById(req.user.id);
+  const user = req.user;
   res.status(200).json({
     success: true,
     user,
@@ -44,7 +45,7 @@ myController.getUserProfile = async (req, res) => {
 
 //LOGOUT
 myController.logout = (req, res) => {
-  res.clearCookie("token");
+  res.clearCookie("accessToken");
   res.status(200).json({
     success: true,
     message: "logged out",
@@ -58,12 +59,13 @@ const generateToken = async (user, statusCode, res) => {
   const token = await user.jwtGenerateToken();
   //creo opzioni per il cookie
   const options = {
-    httpOnly: true, //accesso solo con http per evitare furti di cookie (attacco cross-site scripting)
+    //httpOnly: true, //accesso solo con http per evitare furti di cookie (attacco cross-site scripting)
     expires: new Date(Date.now() + Number(process.env.EXPIRE_TOKEN)), //scadenza cookie
   };
+
   res
     .status(statusCode)
-    .cookie("token", token, options)
+    .cookie("accessToken", token, options)
     .json({ success: true, token });
 };
 
