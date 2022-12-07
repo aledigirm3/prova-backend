@@ -18,15 +18,6 @@ const router = buildRouter({
   },
 });
 
-/*  router.post('/signin', utils.asyncMiddleware( async (req,res,next) => {
-  console.log(UserController)
-  const user = await UserController.signin(req,res,next)
-  console.log(user)
-  res.status(200).json({
-    success: true,
-    user
-  })
-}))  */
 router.post("/actions/signin", authController.signin);
 router.get("/actions/logout", authController.logout);
 router.get("/actions/getme", isAuthenticated, authController.getUserProfile);
