@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser"); //cookie su cui salvare il token
 const errorHandler = require("./middleware/error");
@@ -15,10 +14,9 @@ const categoryRoute = require("./routes/categoryRoute");
 
 //MIDDLEWARE
 app.use(cors({ credentials: true, origin: true }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cookieParser());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(bodyParser.json());
 app.use(morgan("dev"));
 
 //ROUTES MIDDLEWARE

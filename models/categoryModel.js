@@ -1,19 +1,26 @@
 const mongoose = require("mongoose");
+const { ObjectId } = mongoose.Schema;
 
 const CategorySchema = new mongoose.Schema(
   {
-    nome: {
+    name: {
       type: String,
       trim: true,
       required: [true, "Campo obbligatorio"],
       maxlength: 32,
     },
-    descrizione: {
+    description: {
       type: String,
       trim: true,
       required: [true, "Campo obbligatorio"],
       maxlength: 2000,
     },
+    prodotti: [
+      {
+        type: ObjectId,
+        ref: "Product",
+      },
+    ],
   },
   { timestamps: true }
 );

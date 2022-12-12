@@ -16,4 +16,7 @@ const router = buildRouter({
     replaceById: true,
   },
 });
+
+router.get("/actions/all", productController.displayProduct);
+
 module.exports = router;

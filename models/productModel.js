@@ -3,25 +3,25 @@ const { ObjectId } = mongoose.Schema;
 
 const ProductSchema = new mongoose.Schema(
   {
-    nome: {
+    name: {
       type: String,
       trim: true,
       required: [true, "Campo obbligatorio"],
       maxlength: 32,
     },
-    descrizione: {
+    description: {
       type: String,
       trim: true,
       required: [true, "Campo obbligatorio"],
       maxlength: 2000,
     },
-    prezzo: {
+    price: {
       type: Number,
       trim: true,
       required: [true, "Campo obbligatorio"],
       maxlength: 32,
     },
-    categoria: {
+    category: {
       type: ObjectId,
       ref: "Category",
       required: [true, "Campo obbligatorio"],

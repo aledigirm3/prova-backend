@@ -17,6 +17,8 @@ const errorHandler = (err, req, res, next) => {
     err.message = err.message.slice(err.message.indexOf(":") + 1).trim(); //*Object.values(err.errors).map((value) => value.message);
     err.statusCode = 400;
   }
+  console.log(err);
+
   res.status(err.statusCode || 500).json({
     success: false,
     error: err.message || "Server error",
