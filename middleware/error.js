@@ -2,13 +2,23 @@
 const errorHandler = (err, req, res, next) => {
   //mongoose bad ObjectId
   if (err.name === "CastError") {
-    err.message = "Utente inesistente";
-    err.statusCode = 404;
+    if (req._parsedUrl.pathname === "/product/actions/search") {
+      err.message = "Categoria inesistente";
+      err.statusCode = 400;
+    } else {
+      err.message = "Utente inesistente";
+      err.statusCode = 404;
+    }
   }
   //chiave univoca non rispettata
   if (err.code === 11000) {
-    err.message = "Esiste già un utente associato a questa email";
-    err.statusCode = 400;
+    if (req.originalUrl === "/category") {
+      err.message = "Categoria gia presente!";
+      err.statusCode = 400;
+    } else {
+      err.message = "Esiste già un utente associato a questa email";
+      err.statusCode = 400;
+    }
   }
 
   //validation errors (implementate nel modello) for only error name
@@ -17,7 +27,6 @@ const errorHandler = (err, req, res, next) => {
     err.message = err.message.slice(err.message.indexOf(":") + 1).trim(); //*Object.values(err.errors).map((value) => value.message);
     err.statusCode = 400;
   }
-  console.log(err);
 
   res.status(err.statusCode || 500).json({
     success: false,

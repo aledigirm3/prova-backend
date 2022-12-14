@@ -7,6 +7,7 @@ const CategorySchema = new mongoose.Schema(
       type: String,
       trim: true,
       required: [true, "Campo obbligatorio"],
+      unique: true,
       maxlength: 32,
     },
     description: {

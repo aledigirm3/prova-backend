@@ -18,5 +18,6 @@ const router = buildRouter({
 });
 
 router.get("/actions/all", productController.displayProduct);
+router.get("/actions/search", productController.displaySearchProduct);
 
 module.exports = router;
