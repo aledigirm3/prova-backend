@@ -25,40 +25,28 @@ myController.displayProduct = (req, res, next) => {
 myController.displaySearchProduct = (req, res, next) => {
   const limit = Number(req.query.limit) || 0;
   const page = Number(req.query.page) || 1;
-  if (req.query.category === "") {
-    ProductModel.find({
-      name: new RegExp(req.query.name, "i"),
-    })
-      .limit(limit)
-      .skip((page - 1) * limit)
-      .populate("category")
-      .then((result) => {
-        res.status(201).json({
-          success: true,
-          result,
-        });
-      })
-      .catch((err) => {
-        return next(err);
-      });
-  } else {
-    ProductModel.find({
-      name: new RegExp(req.query.name, "i"),
-      category: req.query.category,
-    })
-      .limit(limit)
-      .skip((page - 1) * limit)
-      .populate("category")
-      .then((result) => {
-        res.status(201).json({
-          success: true,
-          result,
-        });
-      })
-      .catch((err) => {
-        return next(err);
-      });
+  const query = {};
+  if (req.query.name) {
+    query.name = new RegExp(`^${req.query.name}`, "i");
   }
+
+  if (req.query.category) {
+    query.category = req.query.category;
+  }
+
+  ProductModel.find(query)
+    .limit(limit)
+    .skip((page - 1) * limit)
+    .populate("category")
+    .then((result) => {
+      res.status(201).json({
+        success: true,
+        result,
+      });
+    })
+    .catch((err) => {
+      return next(err);
+    });
 };
 
 //=====================================HOOK EXPRESS-TOOLKIT======================================
@@ -73,7 +61,7 @@ myController.registerHook("pre:create", (req, res, next) => {
 });
 
 myController.registerHook("pre:count", (req, res, next) => {
-  req.query.name = new RegExp(req.query.name, "i");
+  req.query.name = new RegExp(`^${req.query.name}`, "i");
   next();
 });
 
