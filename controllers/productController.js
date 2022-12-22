@@ -21,12 +21,16 @@ myController.displayProduct = (req, res, next) => {
       return next(err);
     });
 };
-
+//ricerca con paginazione integrata (se deciso da frontend)
 myController.displaySearchProduct = (req, res, next) => {
+  const limit = Number(req.query.limit) || 0;
+  const page = Number(req.query.page) || 1;
   if (req.query.category === "") {
     ProductModel.find({
       name: new RegExp(req.query.name, "i"),
     })
+      .limit(limit)
+      .skip((page - 1) * limit)
       .populate("category")
       .then((result) => {
         res.status(201).json({
@@ -42,6 +46,8 @@ myController.displaySearchProduct = (req, res, next) => {
       name: new RegExp(req.query.name, "i"),
       category: req.query.category,
     })
+      .limit(limit)
+      .skip((page - 1) * limit)
       .populate("category")
       .then((result) => {
         res.status(201).json({
@@ -66,19 +72,9 @@ myController.registerHook("pre:create", (req, res, next) => {
   next();
 });
 
-/* 
-myController.registerHook("post:create", (req, res, next) => {
-  CategoryModel.findById(res.req.body.categoria)
-    .then((result) => {
-      console.log(result);
-      console.log(res.req.body);
-      console.log(typeof result.prodotti);
-      result.prodotti.push(res.req.body.categoria);
-      next();
-    })
-    .catch((err) => {
-      next(new errorResponse(err.message, 500));
-    });
-}); */
+myController.registerHook("pre:count", (req, res, next) => {
+  req.query.name = new RegExp(req.query.name, "i");
+  next();
+});
 
 module.exports = myController;

@@ -5,10 +5,13 @@ const errorHandler = (err, req, res, next) => {
     if (req._parsedUrl.pathname === "/product/actions/search") {
       err.message = "Categoria inesistente";
       err.statusCode = 400;
-    } else {
-      err.message = "Utente inesistente";
+    } else if (req._parsedUrl.pathname === "/product") {
+      err.message = "Prodotto inesistente";
       err.statusCode = 404;
     }
+  } else {
+    err.message = "Utente inesistente";
+    err.statusCode = 404;
   }
   //chiave univoca non rispettata
   if (err.code === 11000) {
