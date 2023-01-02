@@ -21,4 +21,5 @@ const router = buildRouter({
 router.post("/actions/signin", authController.signin);
 router.get("/actions/logout", authController.logout);
 router.get("/actions/getme", isAuthenticated, authController.getUserProfile);
+router.get("/actions/confirmation/:token", authController.confirmation);
 module.exports = router;
