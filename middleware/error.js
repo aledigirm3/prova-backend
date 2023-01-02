@@ -2,16 +2,16 @@
 const errorHandler = (err, req, res, next) => {
   //mongoose bad ObjectId
   if (err.name === "CastError") {
-    if (req._parsedUrl.pathname === "/product/actions/search") {
+    if (req.originalUrl.includes("/category")) {
       err.message = "Categoria inesistente";
       err.statusCode = 400;
-    } else if (req._parsedUrl.pathname === "/product") {
+    } else if (req.originalUrl.includes("/product")) {
       err.message = "Prodotto inesistente";
       err.statusCode = 404;
+    } else {
+      err.message = "Utente inesistente";
+      err.statusCode = 404;
     }
-  } else {
-    err.message = "Utente inesistente";
-    err.statusCode = 404;
   }
   //chiave univoca non rispettata
   if (err.code === 11000) {

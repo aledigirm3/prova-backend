@@ -2,6 +2,7 @@ const { Controller } = require("express-toolkit");
 const { UserModel } = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const errorResponse = require("../utils/errorResponse");
+const { isAuthenticated, isAdmin } = require("../middleware/auth");
 const myController = new Controller({
   model: UserModel,
   name: "Users",
@@ -35,7 +36,6 @@ myController.signin = async (req, res, next) => {
 
 //GET MY PROFILE
 myController.getUserProfile = async (req, res) => {
-  //const user = await UserModel.findById(req.user.id);
   const user = req.user;
   res.status(200).json({
     success: true,
@@ -70,4 +70,29 @@ const generateToken = async (user, statusCode, res) => {
 };
 
 //=====================================HOOK EXPRESS-TOOLKIT======================================
+
+myController.registerHook("pre:updateById", isAuthenticated);
+myController.registerHook("pre:updateById", isAdmin);
+
+myController.registerHook("pre:updateByQuery", isAuthenticated);
+myController.registerHook("pre:updateByQuery", isAdmin);
+
+myController.registerHook("pre:deleteById", isAuthenticated);
+myController.registerHook("pre:deleteById", isAdmin);
+
+myController.registerHook("pre:deleteByQuery", isAuthenticated);
+myController.registerHook("pre:deleteByQuery", isAdmin);
+
+myController.registerHook("pre:patchById", isAuthenticated);
+myController.registerHook("pre:patchById", isAdmin);
+
+myController.registerHook("pre:replaceById", isAuthenticated);
+myController.registerHook("pre:replaceById", isAdmin);
+
+myController.registerHook("pre:find", isAuthenticated);
+myController.registerHook("pre:find", isAdmin);
+
+myController.registerHook("pre:findById", isAuthenticated);
+myController.registerHook("pre:findById", isAdmin);
+
 module.exports = myController;

@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { ObjectId } = mongoose.Schema;
 
 const CategorySchema = new mongoose.Schema(
   {
@@ -16,12 +15,6 @@ const CategorySchema = new mongoose.Schema(
       required: [true, "Campo obbligatorio"],
       maxlength: 2000,
     },
-    prodotti: [
-      {
-        type: ObjectId,
-        ref: "Product",
-      },
-    ],
   },
   { timestamps: true }
 );
