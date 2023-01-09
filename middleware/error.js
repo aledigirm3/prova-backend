@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 const errorHandler = (err, req, res, next) => {
+  console.log(err.name);
   //mongoose bad ObjectId
   if (err.name === "CastError") {
     if (req.originalUrl.includes("/category")) {
@@ -28,6 +29,15 @@ const errorHandler = (err, req, res, next) => {
   //err.name === "ValidationError" non possibile a causa della gestione degli errori di express-toolkit*
   if (err.name === "BadRequest") {
     err.message = err.message.slice(err.message.indexOf(":") + 1).trim(); //*Object.values(err.errors).map((value) => value.message);
+    err.statusCode = 400;
+  }
+  if (err._message === "User validation failed") {
+    err.message = err.message.slice(err.message.indexOf(":") + 1).trim();
+    err.statusCode = 400;
+  }
+
+  if (err.name === "TokenExpiredError") {
+    err.message = "Token invalido o scaduto";
     err.statusCode = 400;
   }
 

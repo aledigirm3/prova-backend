@@ -25,11 +25,11 @@ const UserSchema = new Schema(
     password: {
       type: String,
       trim: true,
-      minlength: [6, "Password troppo corta"],
+      minlength: [6, "troppo corta"],
       required: [true, "Campo obbligatorio"],
       match: [
         /^(?=.*\d)(?=.*[@#\-_$%^&+=§!?])(?=.*[a-z])(?=.*[A-Z])[0-9A-Za-z@#\-_$%^&+=§!?]+$/,
-        `Password deve contenere almeno 1 maiuscola, una minuscola, un numero e un carattere speciale`,
+        `deve contenere almeno 1 maiuscola, una minuscola, un numero e un carattere speciale`,
       ], //validazione
     },
 
@@ -39,7 +39,7 @@ const UserSchema = new Schema(
     },
   },
   { timestamps: true }
-); //dettagli sugli orari nelle modifiche
+); //dettagli sugli orari (creazione e modifiche)
 
 //cripta la password prima di salvare
 UserSchema.pre("save", async function (next) {
@@ -52,6 +52,9 @@ UserSchema.pre("save", async function (next) {
 //genera un token contenente l'id utente (scade dopo 1 ora)
 UserSchema.methods.jwtGenerateToken = function () {
   return jwt.sign({ id: this.id }, process.env.JWT_SECRET, { expiresIn: 3600 });
+};
+UserSchema.methods.jwtGenerateTokenBreve = function () {
+  return jwt.sign({ id: this.id }, process.env.JWT_SECRET, { expiresIn: 500 });
 };
 //compara la password direttamente nel modello al fine di ottimizzare il processo
 /* UserSchema.methods.comparePassword = async function(yourPassword){

@@ -35,8 +35,18 @@ myController.signin = async (req, res, next) => {
       return next(new errorResponse("Invalid credential", 500));
     }
     if (user.role === -1) {
+      const confirmToken = await user.jwtGenerateToken();
+      const url = `http://localhost:8000/auth/actions/confirmation/${confirmToken}`;
+      mailTransporter.sendMail({
+        to: req.body.email,
+        subject: "Conferma email MERN",
+        html: `Clicca sul link e conferma la mail: <a href="${url}">Conferma</a>`,
+      });
       return next(
-        new errorResponse("Conferma la tua mail prima di accedere", 500)
+        new errorResponse(
+          "Conferma la tua mail prima di accedere (è stata reinviata una mail)",
+          500
+        )
       );
     }
     //controllo correttezza password
@@ -71,12 +81,55 @@ myController.logout = (req, res) => {
 
 //CONFERMA EMAIL
 myController.confirmation = async (req, res) => {
-  const decoded = jwt.verify(req.params.token, process.env.JWT_SECRET);
-  await UserModel.findByIdAndUpdate(decoded.id, { role: 0 })
-    .then(() => {
-      return res.redirect(`http://localhost:3000/signin`);
+  try {
+    const decoded = jwt.verify(req.params.token, process.env.JWT_SECRET);
+    await UserModel.findByIdAndUpdate(decoded.id, { role: 0 })
+      .then(() => {
+        return res.redirect(`http://localhost:3000/signin`);
+      })
+      .catch((err) => res.send(err));
+  } catch (error) {
+    return res.redirect(`http://localhost:3000/signin`);
+  }
+};
+
+//RECUPERA PASSWORD CON MAIL
+myController.forgotPassword = async (req, res, next) => {
+  console.log(req.body);
+  UserModel.findOne({ email: req.body.email })
+    .then(async (user) => {
+      const token = await user.jwtGenerateTokenBreve();
+      const url = `http://localhost:3000/reset/password/${token}`;
+      mailTransporter.sendMail({
+        to: req.body.email,
+        subject: "Recupera password MERN",
+        html: `Clicca sul link e conferma la mail: <a href="${url}">Recupera password</a>`,
+      });
+      res.status(200).json({
+        success: true,
+        message: "email sended",
+      });
     })
-    .catch((err) => res.send(err));
+    .catch((error) => {
+      console.log(error);
+      next(new errorResponse("email non valida", 500));
+    });
+};
+
+//UPDATE PASSWORD
+myController.updatePassword = async (req, res, next) => {
+  try {
+    const decoded = jwt.verify(req.params.token, process.env.JWT_SECRET);
+    const user = await UserModel.findById(decoded.id);
+    user.set("password", req.body.password);
+    await user.save();
+    res.status(200).json({
+      success: true,
+      message: "password changed",
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 //=====================================FUNZIONI AUSILIARIE======================================
@@ -122,7 +175,7 @@ myController.registerHook("pre:find", isAdmin);
 myController.registerHook("pre:findById", isAuthenticated);
 myController.registerHook("pre:findById", isAdmin);
 
-//===========================HOOK INVIO MAIL DI CONFERMA===========================
+//===HOOK INVIO MAIL DI CONFERMA===
 myController.registerHook("post:create", async (req, res, next) => {
   const user = await UserModel.findOne({ email: req.body.email });
   const confirmToken = await user.jwtGenerateToken();
@@ -134,5 +187,6 @@ myController.registerHook("post:create", async (req, res, next) => {
   });
   next();
 });
+
 //=============================================================================================
 module.exports = myController;
