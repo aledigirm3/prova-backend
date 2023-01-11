@@ -1,6 +1,5 @@
 // eslint-disable-next-line no-unused-vars
 const errorHandler = (err, req, res, next) => {
-  console.log(err.name);
   //mongoose bad ObjectId
   if (err.name === "CastError") {
     if (req.originalUrl.includes("/category")) {
@@ -36,7 +35,7 @@ const errorHandler = (err, req, res, next) => {
     err.statusCode = 400;
   }
 
-  if (err.name === "TokenExpiredError") {
+  if (err.name === "TokenExpiredError" || err.name === "JsonWebTokenError") {
     err.message = "Token invalido o scaduto";
     err.statusCode = 400;
   }

@@ -36,22 +36,35 @@ myController.displaySearchProduct = (req, res, next) => {
 
   if (req.query.sort) {
     query.sort = req.query.sort;
-  }
-
-  ProductModel.find(query)
-    .sort({ price: query.sort })
-    .limit(limit)
-    .skip((page - 1) * limit)
-    .populate("category")
-    .then((result) => {
-      res.status(201).json({
-        success: true,
-        result,
+    ProductModel.find(query)
+      .sort({ price: query.sort })
+      .limit(limit)
+      .skip((page - 1) * limit)
+      .populate("category")
+      .then((result) => {
+        res.status(201).json({
+          success: true,
+          result,
+        });
+      })
+      .catch((err) => {
+        return next(err);
       });
-    })
-    .catch((err) => {
-      return next(err);
-    });
+  } else {
+    ProductModel.find(query)
+      .limit(limit)
+      .skip((page - 1) * limit)
+      .populate("category")
+      .then((result) => {
+        res.status(201).json({
+          success: true,
+          result,
+        });
+      })
+      .catch((err) => {
+        return next(err);
+      });
+  }
 };
 
 //=====================================HOOK EXPRESS-TOOLKIT======================================
