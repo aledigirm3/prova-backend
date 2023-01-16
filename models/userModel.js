@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcryptjs");
+const { ObjectId } = mongoose.Schema;
 const jwt = require("jsonwebtoken");
-
 const UserSchema = new Schema(
   {
     name: {
@@ -31,6 +31,11 @@ const UserSchema = new Schema(
         /^(?=.*\d)(?=.*[@#\-_$%^&+=§!?])(?=.*[a-z])(?=.*[A-Z])[0-9A-Za-z@#\-_$%^&+=§!?]+$/,
         `deve contenere almeno 1 maiuscola, una minuscola, un numero e un carattere speciale`,
       ], //validazione
+    },
+
+    carrello: {
+      type: ObjectId,
+      ref: "Cart",
     },
 
     role: {

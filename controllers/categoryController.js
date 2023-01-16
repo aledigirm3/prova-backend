@@ -17,7 +17,6 @@ myController.registerHook("pre:updateByQuery", isAdmin);
 myController.registerHook("pre:deleteById", isAuthenticated);
 myController.registerHook("pre:deleteById", isAdmin);
 myController.registerHook("post:deleteById", async (req, res, next) => {
-  console.log(req.params.id);
   const idCategory = req.params.id;
   await ProductModel.deleteMany({ category: idCategory });
   next();

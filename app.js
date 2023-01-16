@@ -12,6 +12,8 @@ require("dotenv").config();
 const authRoute = require("./routes/authRoute");
 const productRoute = require("./routes/productRoute");
 const categoryRoute = require("./routes/categoryRoute");
+const cartRoute = require("./routes/cartRoute");
+const stripe = require("./routes/stripe");
 
 //MIDDLEWARE
 app.use(cors({ credentials: true, origin: true }));
@@ -25,6 +27,8 @@ app.use(morgan("dev"));
 app.use("/auth", authRoute);
 app.use("/product", productRoute);
 app.use("/category", categoryRoute);
+app.use("/cart", cartRoute);
+app.use("/stripe", stripe);
 
 //ERROR MIDDLEWARE
 app.use(errorHandler);

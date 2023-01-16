@@ -1,5 +1,6 @@
 const { Controller } = require("express-toolkit");
 const { UserModel } = require("../models/userModel");
+const { CartModel } = require("../models/cartModel");
 const bcrypt = require("bcryptjs");
 const errorResponse = require("../utils/errorResponse");
 const { isAuthenticated, isAdmin } = require("../middleware/auth");
@@ -84,10 +85,18 @@ myController.confirmation = async (req, res) => {
   try {
     const decoded = jwt.verify(req.params.token, process.env.JWT_SECRET);
     await UserModel.findByIdAndUpdate(decoded.id, { role: 0 })
-      .then(() => {
+      .then(async (result) => {
+        if (!result.carrello) {
+          let cart = new CartModel();
+          await cart.save();
+          await UserModel.findByIdAndUpdate(result._id, { carrello: cart._id });
+        }
+
         return res.redirect(`http://localhost:3000/signin`);
       })
-      .catch((err) => res.send(err));
+      .catch(() => {
+        return res.redirect(`http://localhost:3000/signin`);
+      });
   } catch (error) {
     return res.redirect(`http://localhost:3000/signin`);
   }
@@ -159,6 +168,11 @@ myController.registerHook("pre:updateByQuery", isAdmin);
 
 myController.registerHook("pre:deleteById", isAuthenticated);
 myController.registerHook("pre:deleteById", isAdmin);
+myController.registerHook("pre:deleteById", async (req, res, next) => {
+  const user = await UserModel.findById(req.params.id);
+  await CartModel.findByIdAndDelete(user.carrello);
+  next();
+});
 
 myController.registerHook("pre:deleteByQuery", isAuthenticated);
 myController.registerHook("pre:deleteByQuery", isAdmin);
