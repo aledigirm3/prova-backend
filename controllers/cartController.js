@@ -7,6 +7,7 @@ const myController = new Controller({
   name: "Carts",
 });
 
+//AGGIUNGE UN PRODOTTO AL CARRELLO
 myController.addProduct = (req, res, next) => {
   CartModel.findById(req.user.carrello)
     .then(async (result) => {
@@ -28,6 +29,7 @@ myController.addProduct = (req, res, next) => {
     });
 };
 
+//VISUALIZZA I PRODOTTI PER ESTESO (.populate)
 myController.displayProduct = (req, res, next) => {
   CartModel.findById(req.user.carrello)
     .populate("prodotti")
@@ -41,6 +43,8 @@ myController.displayProduct = (req, res, next) => {
       return next(error);
     });
 };
+
+//RIMUOVE UN SINGOLO PRODOTTO DAL CARRELLO
 myController.removeProduct = (req, res, next) => {
   CartModel.findById(req.user.carrello)
     .then(async (result) => {
@@ -59,6 +63,19 @@ myController.removeProduct = (req, res, next) => {
     })
     .catch((error) => {
       return next(error);
+    });
+};
+
+//SVUOTA IL CARRELLO
+myController.removeAllProduct = (req, res, next) => {
+  CartModel.findById(req.user.carrello)
+    .then(async (result) => {
+      result.prodotti = [];
+      await result.save();
+      res.status(200);
+    })
+    .catch((err) => {
+      return next(err);
     });
 };
 

@@ -30,4 +30,10 @@ router.get(
   cartController.displayProduct
 );
 
+router.put(
+  "/actions/removeproduct/all",
+  isAuthenticated,
+  cartController.removeAllProduct
+);
+
 module.exports = router;
