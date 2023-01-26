@@ -55,6 +55,9 @@ UserSchema.pre("save", async function (next) {
 });
 
 //genera un token contenente l'id utente (scade dopo 1 ora)
+
+//collection database con token jwt e ref utente corrispondente
+
 UserSchema.methods.jwtGenerateToken = function () {
   return jwt.sign({ id: this.id }, process.env.JWT_SECRET, { expiresIn: 3600 });
 };

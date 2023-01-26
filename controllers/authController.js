@@ -50,6 +50,16 @@ myController.signin = async (req, res, next) => {
         )
       );
     }
+    //l' utente autenticato con microservizio non può fare log direttamente dai campi input della piattaforma
+    if (user.role === -2) {
+      return next(
+        new errorResponse(
+          "Attenzione... autenticarsi con la piattaforma con cui è stato fatto il primo accesso",
+          500
+        )
+      );
+    }
+
     //controllo correttezza password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
@@ -73,10 +83,18 @@ myController.getUserProfile = async (req, res) => {
 
 //LOGOUT
 myController.logout = (req, res) => {
-  res.clearCookie("accessToken");
+  //res.clearCookie("accessToken");
   res.status(200).json({
     success: true,
     message: "logged out",
+  });
+};
+
+myController.clearCookie = (req, res) => {
+  res.clearCookie("accessToken");
+  res.status(200).json({
+    success: true,
+    message: "cookie deleted",
   });
 };
 
@@ -141,21 +159,55 @@ myController.updatePassword = async (req, res, next) => {
   }
 };
 
+//=====================================FACEBOOK================================================
+myController.authFacebook = async (accessToken, refreshToken, profile, cb) => {
+  try {
+    let user = await UserModel.findOne({ email: profile._json.email });
+    if (!user) {
+      const carrello = new CartModel();
+      await carrello.save();
+      user = new UserModel({
+        name: profile.displayName,
+        email: profile._json.email,
+        password: process.env.SOCIAL_PSW,
+        carrello: carrello._id,
+        role: -2,
+      });
+      await user.save();
+    }
+    return cb(null, user);
+  } catch (error) {
+    return cb(error, null);
+  }
+};
+
+myController.successfulAuth = async (req, res) => {
+  const token = await req.user.jwtGenerateToken();
+  const options = {
+    //httpOnly: true, //accesso solo con http per evitare furti di cookie (attacco cross-site scripting)
+    expires: new Date(Date.now() + Number(process.env.EXPIRE_TOKEN)), //scadenza cookie
+  };
+  res
+    .status(200)
+    .cookie("accessToken", token, options)
+    .redirect(`${process.env.CLIENT_URL}/signin`);
+};
+
 //=====================================FUNZIONI AUSILIARIE======================================
 //genera il token e lo inserisce in un cookie
 const generateToken = async (user, statusCode, res) => {
   //genero il token
   const token = await user.jwtGenerateToken();
   //creo opzioni per il cookie
-  const options = {
+  /*   const options = {
     //httpOnly: true, //accesso solo con http per evitare furti di cookie (attacco cross-site scripting)
     expires: new Date(Date.now() + Number(process.env.EXPIRE_TOKEN)), //scadenza cookie
-  };
+  }; */
 
   res
     .status(statusCode)
-    .cookie("accessToken", token, options)
-    .json({ success: true, token });
+    //.cookie("accessToken", token, options)
+    .send({ data: { success: true, token } });
 };
 
 //=====================================HOOK EXPRESS-TOOLKIT======================================

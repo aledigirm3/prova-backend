@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 const errorHandler = (err, req, res, next) => {
+  console.log(err);
   //mongoose bad ObjectId
   if (err.name === "CastError") {
     if (req.originalUrl.includes("/category")) {
