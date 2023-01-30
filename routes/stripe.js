@@ -19,6 +19,7 @@ router.post(
             currency: "usd",
             product_data: {
               name: product.name,
+              //images: [product.image],
               metadata: {
                 id: product._id,
               },
@@ -57,6 +58,7 @@ router.post(
               currency: "usd",
               product_data: {
                 name: product.name,
+                //images: [product.image],
                 metadata: {
                   id: product._id,
                 },
