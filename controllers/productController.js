@@ -71,14 +71,14 @@ myController.displaySearchProduct = (req, res, next) => {
 myController.registerHook("pre:updateById", isAuthenticated);
 myController.registerHook("pre:updateById", isAdmin);
 
-myController.registerHook("pre:updateByQuery", isAuthenticated);
-myController.registerHook("pre:updateByQuery", isAdmin);
+myController.registerHook("pre:update", isAuthenticated);
+myController.registerHook("pre:update", isAdmin);
 
 myController.registerHook("pre:deleteById", isAuthenticated);
 myController.registerHook("pre:deleteById", isAdmin);
 
-myController.registerHook("pre:deleteByQuery", isAuthenticated);
-myController.registerHook("pre:deleteByQuery", isAdmin);
+myController.registerHook("pre:delete", isAuthenticated);
+myController.registerHook("pre:delete", isAdmin);
 
 myController.registerHook("pre:patchById", isAuthenticated);
 myController.registerHook("pre:patchById", isAdmin);

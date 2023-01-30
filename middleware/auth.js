@@ -5,6 +5,7 @@ const errorResponse = require("../utils/errorResponse");
 //middleware autenticazione
 const isAuthenticated = async (req, res, next) => {
   const accessToken = req.headers.authorization;
+  console.log(accessToken);
   if (!accessToken) {
     console.log("no1");
     return next(new errorResponse("Devi prima autenticarti", 401));
